@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./styles.css">
+  <!-- Config opcional para conectar à API. Sem config.js, usa fallback estático. -->
+  <script src="./config.js" onerror="window.__BIO_HABITAT_CONFIG_MISSING__ = true;"></script>
   <script type="importmap">
     {
       "imports": {
@@ -20,6 +22,10 @@
 <body>
   <div id="habitat-canvas" class="scene-canvas" aria-label="Visualização tridimensional do habitat"></div>
 
+  <div class="scene-overlay overlay-toxic" aria-hidden="true"></div>
+  <div class="scene-overlay overlay-dry" aria-hidden="true"></div>
+  <div class="scene-overlay overlay-heavy" aria-hidden="true"></div>
+
   <main class="interface">
     <section class="hero-panel" aria-labelledby="scene-heading">
       <p class="eyebrow">Bio-Habitat Generativo</p>
@@ -30,7 +36,11 @@
       </p>
       <div class="scene-status">
         <span id="scene-title">Carregando ilha...</span>
-        <span id="metric-date">--</span>
+        <span class="scene-status-meta">
+          <span class="data-source-badge" id="data-source-badge" aria-live="polite"></span>
+          <span class="tier-chip" id="tier-chip" aria-live="polite">--</span>
+          <span id="metric-date">--</span>
+        </span>
       </div>
     </section>
 

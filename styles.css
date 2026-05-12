@@ -1,5 +1,7 @@
 :root {
   color-scheme: light;
+
+  /* === Tokens base (estado NORMAL — visual original) === */
   --paper: #f6f7f3;
   --paper-strong: #ffffff;
   --ink: #121816;
@@ -11,6 +13,80 @@
   --sun: #d49b3d;
   --wind: #7d8892;
   --shadow: 0 22px 70px rgba(32, 43, 38, 0.16);
+
+  /* === Tokens dinâmicos por tier (sobrescritos via [data-estado]) === */
+  --bg-gradient: linear-gradient(180deg, #f8faf7 0%, #e8eee9 52%, #d8e1dc 100%);
+  --canvas-filter: none;
+  --canvas-opacity: 1;
+  --panel-tint: rgba(255, 255, 255, 0.82);
+  --panel-glow: 0 0 0 transparent;
+  --float-duration: 8s;
+  --float-amplitude: 0;
+  --transition-tier: 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === Estado RADIANTE: saturação alta, brilho, vivacidade === */
+:root[data-estado="radiante"] {
+  --paper: #fcfffc;
+  --ink: #082218;
+  --muted: #2c5742;
+  --line: rgba(11, 60, 38, 0.18);
+  --glass: rgba(255, 255, 255, 0.92);
+  --water: #00b6a4;
+  --growth: #36c172;
+  --sun: #ffb347;
+  --wind: #8ab69e;
+  --shadow: 0 28px 90px rgba(0, 100, 70, 0.28);
+
+  --bg-gradient: linear-gradient(180deg, #d6f5e3 0%, #a6e4d0 50%, #76d2c0 100%);
+  --canvas-filter: saturate(1.45) brightness(1.08) contrast(1.04);
+  --panel-tint: rgba(255, 255, 255, 0.94);
+  --panel-glow: 0 0 24px rgba(45, 200, 150, 0.18);
+  --float-duration: 5s;
+  --float-amplitude: 5px;
+}
+
+/* === Estado ÁRIDO: dessaturado, sépia, tons de palha/marrom === */
+:root[data-estado="arido"] {
+  --paper: #e6dcc4;
+  --ink: #3b3025;
+  --muted: #7a674c;
+  --line: rgba(70, 50, 25, 0.22);
+  --glass: rgba(232, 218, 188, 0.80);
+  --water: #9a8358;
+  --growth: #8a7548;
+  --sun: #c5944b;
+  --wind: #96866a;
+  --shadow: 0 22px 70px rgba(80, 60, 25, 0.28);
+
+  --bg-gradient: linear-gradient(180deg, #e5d6b2 0%, #cdb78a 55%, #b39c6c 100%);
+  --canvas-filter: saturate(0.55) sepia(0.38) brightness(0.94) contrast(0.96);
+  --panel-tint: rgba(232, 218, 187, 0.86);
+  --float-duration: 11s;
+  --float-amplitude: 1px;
+}
+
+/* === Estado CRÍTICO: cinza-roxo escuro, sombrio, peso visual === */
+:root[data-estado="critico"] {
+  color-scheme: dark;
+  --paper: #1c1a25;
+  --ink: #d8d3df;
+  --muted: #8d829b;
+  --line: rgba(150, 130, 175, 0.22);
+  --glass: rgba(30, 24, 45, 0.80);
+  --water: #4a5664;
+  --growth: #4e495a;
+  --sun: #785d50;
+  --wind: #5a5566;
+  --shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+
+  --bg-gradient: linear-gradient(180deg, #2a2335 0%, #1a1421 55%, #0e0a13 100%);
+  --canvas-filter: saturate(0.32) brightness(0.68) hue-rotate(-14deg) contrast(0.95);
+  --canvas-opacity: 0.92;
+  --panel-tint: rgba(30, 24, 45, 0.82);
+  --panel-glow: 0 0 0 transparent;
+  --float-duration: 0s;
+  --float-amplitude: 0;
 }
 
 * {
@@ -27,13 +103,17 @@ body {
   overflow: hidden;
   font-family: "Manrope", "Segoe UI", sans-serif;
   color: var(--ink);
-  background: linear-gradient(180deg, #f8faf7 0%, #e8eee9 52%, #d8e1dc 100%);
+  background: var(--bg-gradient);
+  transition: background var(--transition-tier), color var(--transition-tier);
 }
 
 .scene-canvas {
   position: fixed;
   inset: 0;
   z-index: 0;
+  filter: var(--canvas-filter);
+  opacity: var(--canvas-opacity);
+  transition: filter var(--transition-tier), opacity var(--transition-tier);
 }
 
 .scene-canvas canvas {
@@ -41,6 +121,39 @@ body {
   width: 100%;
   height: 100%;
 }
+
+/* === Overlays condicionais por métrica crítica === */
+.scene-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 2.2s ease;
+}
+
+.overlay-toxic {
+  background:
+    radial-gradient(ellipse at 30% 40%, rgba(110, 38, 122, 0.32) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 60%, rgba(74, 122, 90, 0.28) 0%, transparent 60%);
+  mix-blend-mode: multiply;
+}
+
+.overlay-dry {
+  background:
+    linear-gradient(180deg, transparent 35%, rgba(170, 110, 50, 0.30) 100%),
+    radial-gradient(ellipse at center, transparent 40%, rgba(200, 150, 80, 0.18) 95%);
+  mix-blend-mode: multiply;
+}
+
+.overlay-heavy {
+  background: linear-gradient(180deg, rgba(15, 12, 22, 0) 0%, rgba(15, 12, 22, 0.55) 100%);
+  backdrop-filter: blur(2.5px);
+}
+
+body.flag-stress-critico .overlay-toxic { opacity: 1; }
+body.flag-hydration-critico .overlay-dry { opacity: 1; }
+body.flag-sleep-critico .overlay-heavy { opacity: 1; }
 
 .interface {
   position: relative;
@@ -60,14 +173,45 @@ body {
   pointer-events: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: var(--glass);
-  box-shadow: var(--shadow);
+  background: var(--panel-tint);
+  box-shadow: var(--shadow), var(--panel-glow);
   backdrop-filter: blur(22px) saturate(140%);
+  transition:
+    background var(--transition-tier),
+    box-shadow var(--transition-tier),
+    border-color var(--transition-tier);
 }
 
 .hero-panel {
   align-self: end;
   padding: 28px;
+}
+
+/* === Animação de flutuação dos painéis (intensidade por tier) === */
+@keyframes panel-breathe {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(calc(var(--float-amplitude) * -1)); }
+}
+
+[data-estado="radiante"] .hero-panel {
+  animation: panel-breathe var(--float-duration) ease-in-out infinite;
+}
+
+[data-estado="radiante"] .metrics-panel {
+  animation: panel-breathe var(--float-duration) ease-in-out infinite;
+  animation-delay: calc(var(--float-duration) / -2);
+}
+
+[data-estado="arido"] .hero-panel,
+[data-estado="arido"] .metrics-panel {
+  animation: panel-breathe var(--float-duration) ease-in-out infinite;
+}
+
+/* Crítico: sem animação. Painel parado, pesado. */
+[data-estado="critico"] .hero-panel,
+[data-estado="critico"] .metrics-panel {
+  animation: none;
+  transform: translateY(2px);
 }
 
 .eyebrow {
@@ -77,6 +221,7 @@ body {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  transition: color var(--transition-tier);
 }
 
 h1 {
@@ -85,6 +230,8 @@ h1 {
   line-height: 0.96;
   font-weight: 800;
   letter-spacing: 0;
+  color: var(--ink);
+  transition: color var(--transition-tier);
 }
 
 .lede {
@@ -93,6 +240,7 @@ h1 {
   color: var(--muted);
   font-size: 1rem;
   line-height: 1.65;
+  transition: color var(--transition-tier);
 }
 
 .scene-status {
@@ -104,11 +252,69 @@ h1 {
   border-top: 1px solid var(--line);
   color: var(--muted);
   font-size: 0.9rem;
+  transition: color var(--transition-tier), border-color var(--transition-tier);
 }
 
 .scene-status span:first-child {
   color: var(--ink);
   font-weight: 700;
+}
+
+.scene-status-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.data-source-badge {
+  display: none;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: transparent;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  transition:
+    color var(--transition-tier),
+    border-color var(--transition-tier),
+    background var(--transition-tier);
+}
+
+.data-source-badge.is-visible {
+  display: inline-flex;
+  align-items: center;
+}
+
+.data-source-badge.is-stale {
+  color: #a85a2a;
+  border-color: rgba(168, 90, 42, 0.45);
+  background: rgba(168, 90, 42, 0.08);
+}
+
+.data-source-badge.is-error {
+  color: #b03737;
+  border-color: rgba(176, 55, 55, 0.45);
+  background: rgba(176, 55, 55, 0.10);
+}
+
+.tier-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  margin-left: 8px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: background var(--transition-tier), color var(--transition-tier);
 }
 
 .metrics-panel {
@@ -123,6 +329,7 @@ h1 {
   font-weight: 800;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  transition: color var(--transition-tier);
 }
 
 .panel-summary {
@@ -130,6 +337,7 @@ h1 {
   color: var(--muted);
   font-size: 0.96rem;
   line-height: 1.65;
+  transition: color var(--transition-tier);
 }
 
 .metrics {
@@ -147,6 +355,15 @@ h1 {
   border-right: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
   background: rgba(255, 255, 255, 0.32);
+  transition: background var(--transition-tier), border-color var(--transition-tier);
+}
+
+[data-estado="critico"] .metric-row {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+[data-estado="arido"] .metric-row {
+  background: rgba(255, 248, 220, 0.20);
 }
 
 .metric-row dt {
@@ -154,6 +371,7 @@ h1 {
   color: var(--muted);
   font-size: 0.8rem;
   font-weight: 700;
+  transition: color var(--transition-tier);
 }
 
 .metric-row dd {
@@ -162,22 +380,27 @@ h1 {
   font-size: 1.34rem;
   line-height: 1;
   font-weight: 800;
+  transition: color var(--transition-tier);
 }
 
-.metric-row:nth-child(1) dd {
-  color: var(--sun);
+.metric-row:nth-child(1) dd { color: var(--sun); }
+.metric-row:nth-child(2) dd { color: var(--water); }
+.metric-row:nth-child(3) dd { color: var(--growth); }
+.metric-row:nth-child(4) dd { color: var(--wind); }
+
+/* === Flag visual nas métricas individuais críticas === */
+.metric-row.is-critico dd {
+  position: relative;
+  filter: brightness(1.1);
 }
 
-.metric-row:nth-child(2) dd {
-  color: var(--water);
-}
-
-.metric-row:nth-child(3) dd {
-  color: var(--growth);
-}
-
-.metric-row:nth-child(4) dd {
-  color: var(--wind);
+.metric-row.is-critico::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(220, 100, 100, 0.45);
+  border-radius: 2px;
+  pointer-events: none;
 }
 
 @media (max-width: 980px) {
@@ -197,6 +420,7 @@ h1 {
     min-height: auto;
     padding: 16px;
     background: var(--paper);
+    transition: background var(--transition-tier);
   }
 
   .hero-panel,
@@ -241,5 +465,14 @@ h1 {
   .scene-status,
   .metrics {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

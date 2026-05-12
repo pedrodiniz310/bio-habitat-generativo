@@ -18,6 +18,7 @@ Thumbs.db
 **/anotacoes.md
 .env.local
 .env.*.local
+config.js
 
 # Artifacts (keep empty dirs)
 artifacts/*.png

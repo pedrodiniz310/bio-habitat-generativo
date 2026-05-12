@@ -1,0 +1,53 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject config.js from secrets
+        env:
+          API_URL: ${{ secrets.HABITAT_API_URL }}
+          API_TOKEN: ${{ secrets.HABITAT_API_TOKEN }}
+        run: |
+          cat > config.js <<EOF
+          window.__BIO_HABITAT_CONFIG__ = {
+            apiUrl: "${API_URL}",
+            apiToken: "${API_TOKEN}",
+            cacheStaleAfterMs: 86400000
+          };
+          EOF
+          if [ -z "$API_URL" ] || [ -z "$API_TOKEN" ]; then
+            echo "⚠️  Secrets HABITAT_API_URL / HABITAT_API_TOKEN não configurados — site usará dados de exemplo."
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
