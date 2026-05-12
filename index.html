@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bio-Habitat Generativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <div id="habitat-canvas" class="scene-canvas" aria-label="Visualização tridimensional do habitat"></div>
+
+  <main class="interface">
+    <section class="hero-panel" aria-labelledby="scene-heading">
+      <p class="eyebrow">Bio-Habitat Generativo</p>
+      <h1 id="scene-heading">Ilha viva</h1>
+      <p class="lede">
+        Um espelho 3D do seu dia: sono sustenta relevo e copa, água abre cascatas,
+        exercício acende atividade no ar, e tela em excesso aparece como vento.
+      </p>
+      <div class="scene-status">
+        <span id="scene-title">Carregando ilha...</span>
+        <span id="metric-date">--</span>
+      </div>
+    </section>
+
+    <aside class="metrics-panel">
+      <p class="panel-label">Estado do dia</p>
+      <p class="panel-summary" id="scene-summary"></p>
+      <dl class="metrics" id="metrics-list"></dl>
+    </aside>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

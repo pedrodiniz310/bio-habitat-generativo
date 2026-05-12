@@ -1,0 +1,28 @@
+{
+  "user_id": 123456789,
+  "date": "2026-05-12",
+  "metrics": {
+    "sleep_hours": 4.2,
+    "water_liters": 0.8,
+    "exercise_minutes": 8,
+    "screen_hours": 10.5
+  },
+  "scores": {
+    "sleep": 0.525,
+    "hydration": 0.267,
+    "exercise": 0.178,
+    "stress": 1.0
+  },
+  "state": {
+    "plant_growth": 0.422,
+    "mist_level": 0.733,
+    "fauna_density": 0.178,
+    "wind_intensity": 1.0
+  },
+  "sources": {
+    "sleep_hours": "daily_metrics",
+    "water_liters": "daily_metrics",
+    "exercise_minutes": "daily_metrics",
+    "screen_hours": "daily_metrics"
+  }
+}

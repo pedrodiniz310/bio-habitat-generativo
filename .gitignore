@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
+.env
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sensitive files
+**/anotacoes.md
+.env.local
+.env.*.local
+
+# Artifacts (keep empty dirs)
+artifacts/*.png
+artifacts/*.jpg
